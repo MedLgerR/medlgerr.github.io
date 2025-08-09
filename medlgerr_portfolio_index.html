@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MedLgerr — Trading Cockpit</title>
+  <meta name="description" content="MedLgerr — Algorithmic trading portfolio" />
+  <link rel="icon" href="data:,"><style>
+  /* ---------- Base & theme ---------- */
+  :root{--bg:#0b0f14;--panel:#0f1720;--accent:#00e6c3;--accent2:#5b7df7;--muted:#93a1b2}
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial; background: radial-gradient(ellipse at 20% 10%, rgba(91,125,247,0.04), transparent 15%), radial-gradient(ellipse at 80% 90%, rgba(0,230,195,0.03), transparent 12%), var(--bg); color:#cbd5e1}
+  a{color:var(--accent)}
+  .container{max-width:1100px;margin:40px auto;padding:24px}
+  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+  .brand{display:flex;gap:12px;align-items:center}
+  .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent2),var(--accent));display:flex;align-items:center;justify-content:center;font-weight:700;color:#041024;font-size:20px;box-shadow:0 6px 30px rgba(91,125,247,0.08);}
+  h1{margin:0;font-size:20px}
+  .subtitle{color:var(--muted);font-size:13px}
+
+  /* ---------- Layout ---------- */
+  .grid{display:grid;grid-template-columns: 380px 1fr 320px;gap:18px}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:14px;padding:16px;box-shadow:0 6px 30px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.03)}
+  .left, .center, .right{min-height:500px}
+
+  /* ---------- Left: Strategies list ---------- */
+  .strategies{display:flex;flex-direction:column;gap:12px}
+  .strategy{display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;cursor:pointer;background:transparent;border:1px solid rgba(255,255,255,0.02);transition:all .22s}
+  .strategy:hover{transform:translateY(-4px);box-shadow:0 10px 30px rgba(0,0,0,0.6);border-color:rgba(91,125,247,0.12)}
+  .strategy .icon{width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,var(--accent2),#182033);display:flex;align-items:center;justify-content:center;font-weight:700;color:white}
+  .strategy h4{margin:0;font-size:14px}
+  .strategy p{margin:0;color:var(--muted);font-size:12px}
+
+  /* ---------- Center: 3D canvas + stats ---------- */
+  #canvas-wrap{height:420px;border-radius:12px;overflow:hidden;position:relative}
+  #threejs-canvas{display:block;width:100%;height:100%}
+  .overlay-stats{position:absolute;left:18px;bottom:18px;background:rgba(2,6,23,0.6);backdrop-filter:blur(6px);padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
+  .metrics{display:flex;gap:12px}
+  .metric{min-width:110px}
+  .metric h3{margin:0;font-size:16px}
+  .metric p{margin:0;color:var(--muted);font-size:12px}
+
+  /* ---------- Right: Dashboard widgets ---------- */
+  .widget{margin-bottom:12px}
+  .widget h3{margin:0 0 8px 0}
+  .eq-curve{width:100%;height:180px}
+  .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  .stat{background:linear-gradient(90deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));padding:8px;border-radius:8px}
+  .stat strong{display:block;font-size:18px}
+
+  /* ---------- Modals & interactions ---------- */
+  .panel{position:fixed;right:20px;top:80px;width:420px;max-height:78vh;overflow:auto;padding:16px;border-radius:12px;background:linear-gradient(180deg, rgba(7,10,15,0.96), rgba(7,10,15,0.94));border:1px solid rgba(255,255,255,0.03);box-shadow:0 20px 60px rgba(2,6,23,0.7);transform:translateX(12px);transition:transform .28s,opacity .28s;opacity:0}
+  .panel.open{transform:translateX(0);opacity:1}
+  .close-btn{background:transparent;border:0;color:var(--muted);cursor:pointer}
+
+  /* ---------- Footer ---------- */
+  footer{margin-top:20px;text-align:center;color:var(--muted);font-size:13px}
+
+  /* small screens */
+  @media (max-width:1000px){.grid{grid-template-columns:1fr;}.right{order:3}.left{order:2}.center{order:1}.container{padding:12px}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">MG</div>
+        <div>
+          <h1>MedLgerr — Trading Cockpit</h1>
+          <div class="subtitle">Algorithmic trading portfolio — hedging, arbitrage, HFT</div>
+        </div>
+      </div>
+      <div>
+        <small class="subtitle">Static site • Manual updates • Hosted on GitHub Pages</small>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div class="left card">
+        <h3>Strategies</h3>
+        <div class="strategies" id="strategies">
+          <!-- Strategy items injected by JS -->
+        </div>
+      </div>
+
+      <div class="center card">
+        <div id="canvas-wrap">
+          <canvas id="threejs-canvas"></canvas>
+          <div class="overlay-stats">
+            <div class="metrics">
+              <div class="metric"><h3 id="liveProfit">₹ 0</h3><p>Net P&L</p></div>
+              <div class="metric"><h3 id="sharpe">0.00</h3><p>Sharpe</p></div>
+              <div class="metric"><h3 id="maxdd">0.0%</h3><p>Max Drawdown</p></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;display:flex;gap:12px;align-items:center">
+          <button id="togglePanel" class="card" style="cursor:pointer;">Open Strategy Panel</button>
+          <div style="color:var(--muted);font-size:13px">Tip: click a strategy left to load its data</div>
+        </div>
+      </div>
+
+      <div class="right card">
+        <div class="widget">
+          <h3>Equity Curve</h3>
+          <canvas id="equityChart" class="eq-curve"></canvas>
+        </div>
+        <div class="widget">
+          <h3>Performance</h3>
+          <div class="stat-grid">
+            <div class="stat"><strong id="cagr">0.0%</strong><small>CAGR</small></div>
+            <div class="stat"><strong id="winrate">0%</strong><small>Win Rate</small></div>
+            <div class="stat"><strong id="pf">0.00</strong><small>Profit Factor</small></div>
+            <div class="stat"><strong id="trades">0</strong><small>Total Trades</small></div>
+          </div>
+        </div>
+
+        <div class="widget">
+          <h3>Files</h3>
+          <div style="display:flex;gap:8px;flex-direction:column">
+            <a href="#" id="downloadReport" class="card" style="text-decoration:none;color:inherit">Download latest PDF report</a>
+            <a href="#" id="viewRepo" class="card" style="text-decoration:none;color:inherit">View source code (GitHub)</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>Made with ❤️ — MedLgerr</footer>
+  </div>
+
+  <!-- Floating panel for strategy details -->
+  <div class="panel" id="detailPanel">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 id="panelTitle">Strategy</h3>
+      <button class="close-btn" id="closePanel">✕</button>
+    </div>
+    <p id="panelDesc" style="color:var(--muted)"></p>
+
+    <h4>Stats</h4>
+    <div style="display:flex;gap:12px;margin-bottom:8px">
+      <div style="flex:1;background:rgba(255,255,255,0.02);padding:10px;border-radius:8px"><strong id="panelSharpe">0.00</strong><div style="font-size:12px;color:var(--muted)">Sharpe</div></div>
+      <div style="flex:1;background:rgba(255,255,255,0.02);padding:10px;border-radius:8px"><strong id="panelMaxDD">0%</strong><div style="font-size:12px;color:var(--muted)">Max DD</div></div>
+    </div>
+
+    <h4>Backtest Equity</h4>
+    <canvas id="panelEquity" style="width:100%;height:200px;background:transparent"></canvas>
+
+    <h4 style="margin-top:12px">EA / Code</h4>
+    <pre id="codeBlock" style="background:#061224;padding:12px;border-radius:8px;color:#9ae6b4;overflow:auto;max-height:220px">// paste EA or strategy summary here</pre>
+  </div>
+
+  <!-- Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+  /* ---------- Placeholder data: edit these manually in the HTML to update your site ---------- */
+  const STRATEGIES = [
+    {id:'stat1',name:'PairStat Arb',type:'Pairs Trading',desc:'Mean-reversion pairs strategy focusing on cointegrated pairs. Fast entry/exit. HFT-friendly.',sharpe:2.1,maxdd:6.2,profit:12500,equity:[10000,10200,10450,10300,10700,11000,12000,12500,13000,12500,13500]},
+    {id:'stat2',name:'Micro HFT',type:'HFT Scalper',desc:'Low-latency scalper for FX crossed pairs using micro-spread capture.',sharpe:3.8,maxdd:4.1,profit:34200,equity:[20000,20100,20250,20300,20350,20400,20500,20700,21000]},
+    {id:'stat3',name:'Index Hedger',type:'Hedging',desc:'Portfolio-level hedging with dynamic delta-neutral overlays.',sharpe:1.4,maxdd:8.2,profit:7200,equity:[15000,14900,15100,15200,15000,15250,15300]}
+  ];
+
+  // Basic site-wide summary numbers (manually update when needed)
+  const SUMMARY = {pnl:57900,sharpe:2.65,maxdd:6.8,cagr:42.3,winrate:68,pf:1.82,trades:124};
+
+  /* ---------- Strategies list render ---------- */
+  const strategiesNode = document.getElementById('strategies');
+  STRATEGIES.forEach(s=>{
+    const el = document.createElement('div');el.className='strategy';el.dataset.id=s.id;
+    el.innerHTML = `<div class="icon">${s.name.match(/\b\w/g).slice(0,2).join('')}</div><div><h4>${s.name}</h4><p>${s.type}</p></div>`;
+    el.addEventListener('click',()=>loadStrategy(s));
+    strategiesNode.appendChild(el);
+  });
+
+  // Fill summary metrics
+  document.getElementById('liveProfit').innerText = '₹ ' + SUMMARY.pnl.toLocaleString();
+  document.getElementById('sharpe').innerText = SUMMARY.sharpe.toFixed(2);
+  document.getElementById('maxdd').innerText = SUMMARY.maxdd + '%';
+  document.getElementById('cagr').innerText = SUMMARY.cagr + '%';
+  document.getElementById('winrate').innerText = SUMMARY.winrate + '%';
+  document.getElementById('pf').innerText = SUMMARY.pf.toFixed(2);
+  document.getElementById('trades').innerText = SUMMARY.trades;
+
+  /* ---------- Chart.js equity curve (right panel) ---------- */
+  const eqCtx = document.getElementById('equityChart').getContext('2d');
+  const defaultEquity = STRATEGIES[0].equity;
+  const equityChart = new Chart(eqCtx,{type:'line',data:{labels:defaultEquity.map((_,i)=>i+1),datasets:[{label:'Equity',data:defaultEquity,fill:true,backgroundColor:'rgba(0,230,195,0.08)',borderColor:'rgba(0,230,195,0.9)',pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:false},y:{grid:{color:'rgba(255,255,255,0.03)'}}}}});
+
+  /* ---------- Panel controls ---------- */
+  const panel = document.getElementById('detailPanel');
+  document.getElementById('togglePanel').addEventListener('click',()=>panel.classList.toggle('open'));
+  document.getElementById('closePanel').addEventListener('click',()=>panel.classList.remove('open'));
+
+  function loadStrategy(s){
+    panel.classList.add('open');
+    document.getElementById('panelTitle').innerText = s.name;
+    document.getElementById('panelDesc').innerText = s.desc;
+    document.getElementById('panelSharpe').innerText = s.sharpe.toFixed(2);
+    document.getElementById('panelMaxDD').innerText = s.maxdd + '%';
+    document.getElementById('codeBlock').innerText = `// EA summary for ${s.name}\n// paste your MQL5/Strategy notes here\n// Example: timeframe=M5, SL=20, TP=40, maxPos=3`;
+
+    // update right equity chart
+    equityChart.data.datasets[0].data = s.equity;
+    equityChart.data.labels = s.equity.map((_,i)=>i+1);
+    equityChart.update();
+
+    // small update of summary numbers
+    document.getElementById('liveProfit').innerText = '₹ ' + (s.profit).toLocaleString();
+    document.getElementById('sharpe').innerText = s.sharpe.toFixed(2);
+    document.getElementById('maxdd').innerText = s.maxdd + '%';
+  }
+
+  // default load first
+  loadStrategy(STRATEGIES[0]);
+
+  /* ---------- Minimal Three.js scene: rotating candlestick made of boxes ---------- */
+  (function(){
+    const canvas = document.getElementById('threejs-canvas');
+    const renderer = new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+    renderer.setPixelRatio(window.devicePixelRatio);renderer.setSize(canvas.clientWidth,canvas.clientHeight,false);
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, canvas.clientWidth/canvas.clientHeight,0.1,1000);
+    camera.position.set(0,1.2,4);
+    const light = new THREE.DirectionalLight(0xffffff,0.8);light.position.set(5,10,2);scene.add(light);
+    scene.add(new THREE.AmbientLight(0x999999,0.6));
+
+    // create candlestick: body + wick
+    function makeCandle(colorBody){
+      const group = new THREE.Group();
+      const wickGeo = new THREE.BoxGeometry(0.06,1.4,0.06);
+      const wickMat = new THREE.MeshStandardMaterial({color:0x9aaecb,metalness:0.2,roughness:0.6});
+      const wick = new THREE.Mesh(wickGeo,wickMat);wick.position.y=0;group.add(wick);
+      const bodyGeo = new THREE.BoxGeometry(0.5,1,0.5);
+      const bodyMat = new THREE.MeshStandardMaterial({color:colorBody,metalness:0.3,roughness:0.35});
+      const body = new THREE.Mesh(bodyGeo,bodyMat);body.position.y=0;group.add(body);
+      return group;
+    }
+
+    const candle = makeCandle(0x00e6c3);
+    scene.add(candle);
+
+    // add subtle grid plane
+    const grid = new THREE.GridHelper(12,24,'#072033','#07121a');grid.rotation.x=Math.PI/2;grid.position.y=-1.2;scene.add(grid);
+
+    // responsive
+    function onResize(){
+      const w=canvas.clientWidth;const h=canvas.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
+    window.addEventListener('resize',onResize);
+
+    let t=0;
+    function animate(){t+=0.01;candle.rotation.y = Math.sin(t*0.6)*0.2; candle.rotation.x = Math.sin(t*0.3)*0.08; renderer.render(scene,camera);requestAnimationFrame(animate);}animate();
+
+    // click to toggle candle color (green/red) and small bloom effect
+    canvas.addEventListener('click',()=>{
+      const body = candle.children[1];
+      const isGreen = body.material.color.getHex()===0x00e6c3;
+      body.material.color.set(isGreen?0xff6b6b:0x00e6c3);
+    });
+  })();
+
+  // small helper: update links to your repo/report if you replace them
+  document.getElementById('viewRepo').href = 'https://github.com/MedLgerr/medlgerr.github.io';
+  document.getElementById('downloadReport').href = '#';
+
+  /* ---------- Drag to rearrange widgets (very minimal) ---------- */
+  (function(){
+    const widgets = document.querySelectorAll('.widget');
+    widgets.forEach(w=>{
+      w.draggable = true;
+      w.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',null);w.classList.add('dragging')});
+      w.addEventListener('dragend',e=>{w.classList.remove('dragging')});
+    });
+    const rightCol = document.querySelector('.right');
+    rightCol.addEventListener('dragover',e=>e.preventDefault());
+    rightCol.addEventListener('drop',e=>{
+      const dragging = document.querySelector('.dragging');
+      if(dragging) rightCol.insertBefore(dragging, rightCol.firstChild);
+    });
+  })();
+
+  </script>
+</body>
+</html>
