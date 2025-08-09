@@ -43,7 +43,19 @@
   /* ---------- Right: Dashboard widgets ---------- */
   .widget{margin-bottom:12px}
   .widget h3{margin:0 0 8px 0}
-  .eq-curve{width:100%;height:180px}
+  .eq-curve{
+    width: 100% !important;
+    height: 180px !important;
+    max-width: 100%;
+    max-height: 180px;
+    display: block;
+    overflow: hidden;
+  }
+  .eq-curve canvas {
+    width: 100% !important;
+    height: 180px !important;
+    display: block;
+  }
   .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
   .stat{background:linear-gradient(90deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));padding:8px;border-radius:8px}
   .stat strong{display:block;font-size:18px}
@@ -115,171 +127,62 @@
             <div class="stat"><strong id="trades">0</strong><small>Total Trades</small></div>
           </div>
         </div>
-
-        <div class="widget">
-          <h3>Files</h3>
-          <div style="display:flex;gap:8px;flex-direction:column">
-            <a href="#" id="downloadReport" class="card" style="text-decoration:none;color:inherit">Download latest PDF report</a>
-            <a href="#" id="viewRepo" class="card" style="text-decoration:none;color:inherit">View source code (GitHub)</a>
-          </div>
-        </div>
       </div>
     </div>
-
-    <footer>Made with ❤️ — MedLgerr</footer>
   </div>
 
-  <!-- Floating panel for strategy details -->
-  <div class="panel" id="detailPanel">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <h3 id="panelTitle">Strategy</h3>
-      <button class="close-btn" id="closePanel">✕</button>
-    </div>
-    <p id="panelDesc" style="color:var(--muted)"></p>
-
-    <h4>Stats</h4>
-    <div style="display:flex;gap:12px;margin-bottom:8px">
-      <div style="flex:1;background:rgba(255,255,255,0.02);padding:10px;border-radius:8px"><strong id="panelSharpe">0.00</strong><div style="font-size:12px;color:var(--muted)">Sharpe</div></div>
-      <div style="flex:1;background:rgba(255,255,255,0.02);padding:10px;border-radius:8px"><strong id="panelMaxDD">0%</strong><div style="font-size:12px;color:var(--muted)">Max DD</div></div>
-    </div>
-
-    <h4>Backtest Equity</h4>
-    <canvas id="panelEquity" style="width:100%;height:200px;background:transparent"></canvas>
-
-    <h4 style="margin-top:12px">EA / Code</h4>
-    <pre id="codeBlock" style="background:#061224;padding:12px;border-radius:8px;color:#9ae6b4;overflow:auto;max-height:220px">// paste EA or strategy summary here</pre>
-  </div>
-
-  <!-- Libraries -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <script>
-  /* ---------- Placeholder data: edit these manually in the HTML to update your site ---------- */
-  const STRATEGIES = [
-    {id:'stat1',name:'PairStat Arb',type:'Pairs Trading',desc:'Mean-reversion pairs strategy focusing on cointegrated pairs. Fast entry/exit. HFT-friendly.',sharpe:2.1,maxdd:6.2,profit:12500,equity:[10000,10200,10450,10300,10700,11000,12000,12500,13000,12500,13500]},
-    {id:'stat2',name:'Micro HFT',type:'HFT Scalper',desc:'Low-latency scalper for FX crossed pairs using micro-spread capture.',sharpe:3.8,maxdd:4.1,profit:34200,equity:[20000,20100,20250,20300,20350,20400,20500,20700,21000]},
-    {id:'stat3',name:'Index Hedger',type:'Hedging',desc:'Portfolio-level hedging with dynamic delta-neutral overlays.',sharpe:1.4,maxdd:8.2,profit:7200,equity:[15000,14900,15100,15200,15000,15250,15300]}
-  ];
+    // Equity chart setup
+    const equityCanvas = document.getElementById('equityChart');
+    const equityCtx = equityCanvas.getContext('2d');
 
-  // Basic site-wide summary numbers (manually update when needed)
-  const SUMMARY = {pnl:57900,sharpe:2.65,maxdd:6.8,cagr:42.3,winrate:68,pf:1.82,trades:124};
+    const equityChart = new Chart(equityCtx, {
+      type: 'line',
+      data: {
+        labels: [], // timestamps or indexes
+        datasets: [{
+          label: 'Equity',
+          data: [],
+          borderColor: 'rgba(0, 230, 195, 1)',
+          backgroundColor: 'rgba(0, 230, 195, 0.2)',
+          fill: true,
+          tension: 0.2,
+          pointRadius: 0,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: { display: false },
+          y: {
+            ticks: { color: '#88d8cc' },
+            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+          }
+        },
+        plugins: {
+          legend: { display: false }
+        },
+        animation: false,
+      }
+    });
 
-  /* ---------- Strategies list render ---------- */
-  const strategiesNode = document.getElementById('strategies');
-  STRATEGIES.forEach(s=>{
-    const el = document.createElement('div');el.className='strategy';el.dataset.id=s.id;
-    el.innerHTML = `<div class="icon">${s.name.match(/\b\w/g).slice(0,2).join('')}</div><div><h4>${s.name}</h4><p>${s.type}</p></div>`;
-    el.addEventListener('click',()=>loadStrategy(s));
-    strategiesNode.appendChild(el);
-  });
-
-  // Fill summary metrics
-  document.getElementById('liveProfit').innerText = '₹ ' + SUMMARY.pnl.toLocaleString();
-  document.getElementById('sharpe').innerText = SUMMARY.sharpe.toFixed(2);
-  document.getElementById('maxdd').innerText = SUMMARY.maxdd + '%';
-  document.getElementById('cagr').innerText = SUMMARY.cagr + '%';
-  document.getElementById('winrate').innerText = SUMMARY.winrate + '%';
-  document.getElementById('pf').innerText = SUMMARY.pf.toFixed(2);
-  document.getElementById('trades').innerText = SUMMARY.trades;
-
-  /* ---------- Chart.js equity curve (right panel) ---------- */
-  const eqCtx = document.getElementById('equityChart').getContext('2d');
-  const defaultEquity = STRATEGIES[0].equity;
-  const equityChart = new Chart(eqCtx,{type:'line',data:{labels:defaultEquity.map((_,i)=>i+1),datasets:[{label:'Equity',data:defaultEquity,fill:true,backgroundColor:'rgba(0,230,195,0.08)',borderColor:'rgba(0,230,195,0.9)',pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:false},y:{grid:{color:'rgba(255,255,255,0.03)'}}}}});
-
-  /* ---------- Panel controls ---------- */
-  const panel = document.getElementById('detailPanel');
-  document.getElementById('togglePanel').addEventListener('click',()=>panel.classList.toggle('open'));
-  document.getElementById('closePanel').addEventListener('click',()=>panel.classList.remove('open'));
-
-  function loadStrategy(s){
-    panel.classList.add('open');
-    document.getElementById('panelTitle').innerText = s.name;
-    document.getElementById('panelDesc').innerText = s.desc;
-    document.getElementById('panelSharpe').innerText = s.sharpe.toFixed(2);
-    document.getElementById('panelMaxDD').innerText = s.maxdd + '%';
-    document.getElementById('codeBlock').innerText = `// EA summary for ${s.name}\n// paste your MQL5/Strategy notes here\n// Example: timeframe=M5, SL=20, TP=40, maxPos=3`;
-
-    // update right equity chart
-    equityChart.data.datasets[0].data = s.equity;
-    equityChart.data.labels = s.equity.map((_,i)=>i+1);
-    equityChart.update();
-
-    // small update of summary numbers
-    document.getElementById('liveProfit').innerText = '₹ ' + (s.profit).toLocaleString();
-    document.getElementById('sharpe').innerText = s.sharpe.toFixed(2);
-    document.getElementById('maxdd').innerText = s.maxdd + '%';
-  }
-
-  // default load first
-  loadStrategy(STRATEGIES[0]);
-
-  /* ---------- Minimal Three.js scene: rotating candlestick made of boxes ---------- */
-  (function(){
-    const canvas = document.getElementById('threejs-canvas');
-    const renderer = new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
-    renderer.setPixelRatio(window.devicePixelRatio);renderer.setSize(canvas.clientWidth,canvas.clientHeight,false);
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, canvas.clientWidth/canvas.clientHeight,0.1,1000);
-    camera.position.set(0,1.2,4);
-    const light = new THREE.DirectionalLight(0xffffff,0.8);light.position.set(5,10,2);scene.add(light);
-    scene.add(new THREE.AmbientLight(0x999999,0.6));
-
-    // create candlestick: body + wick
-    function makeCandle(colorBody){
-      const group = new THREE.Group();
-      const wickGeo = new THREE.BoxGeometry(0.06,1.4,0.06);
-      const wickMat = new THREE.MeshStandardMaterial({color:0x9aaecb,metalness:0.2,roughness:0.6});
-      const wick = new THREE.Mesh(wickGeo,wickMat);wick.position.y=0;group.add(wick);
-      const bodyGeo = new THREE.BoxGeometry(0.5,1,0.5);
-      const bodyMat = new THREE.MeshStandardMaterial({color:colorBody,metalness:0.3,roughness:0.35});
-      const body = new THREE.Mesh(bodyGeo,bodyMat);body.position.y=0;group.add(body);
-      return group;
+    // Dummy data injection example to test height
+    function generateDummyEquityData() {
+      const data = [];
+      const labels = [];
+      for (let i = 0; i < 100; i++) {
+        labels.push(i);
+        data.push(Math.sin(i / 10) * 10 + 50);
+      }
+      equityChart.data.labels = labels;
+      equityChart.data.datasets[0].data = data;
+      equityChart.update();
     }
-
-    const candle = makeCandle(0x00e6c3);
-    scene.add(candle);
-
-    // add subtle grid plane
-    const grid = new THREE.GridHelper(12,24,'#072033','#07121a');grid.rotation.x=Math.PI/2;grid.position.y=-1.2;scene.add(grid);
-
-    // responsive
-    function onResize(){
-      const w=canvas.clientWidth;const h=canvas.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
-    window.addEventListener('resize',onResize);
-
-    let t=0;
-    function animate(){t+=0.01;candle.rotation.y = Math.sin(t*0.6)*0.2; candle.rotation.x = Math.sin(t*0.3)*0.08; renderer.render(scene,camera);requestAnimationFrame(animate);}animate();
-
-    // click to toggle candle color (green/red) and small bloom effect
-    canvas.addEventListener('click',()=>{
-      const body = candle.children[1];
-      const isGreen = body.material.color.getHex()===0x00e6c3;
-      body.material.color.set(isGreen?0xff6b6b:0x00e6c3);
-    });
-  })();
-
-  // small helper: update links to your repo/report if you replace them
-  document.getElementById('viewRepo').href = 'https://github.com/MedLgerr/medlgerr.github.io';
-  document.getElementById('downloadReport').href = '#';
-
-  /* ---------- Drag to rearrange widgets (very minimal) ---------- */
-  (function(){
-    const widgets = document.querySelectorAll('.widget');
-    widgets.forEach(w=>{
-      w.draggable = true;
-      w.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',null);w.classList.add('dragging')});
-      w.addEventListener('dragend',e=>{w.classList.remove('dragging')});
-    });
-    const rightCol = document.querySelector('.right');
-    rightCol.addEventListener('dragover',e=>e.preventDefault());
-    rightCol.addEventListener('drop',e=>{
-      const dragging = document.querySelector('.dragging');
-      if(dragging) rightCol.insertBefore(dragging, rightCol.firstChild);
-    });
-  })();
-
+    generateDummyEquityData();
   </script>
 </body>
 </html>
