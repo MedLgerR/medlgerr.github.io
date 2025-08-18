@@ -1,0 +1,97 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Process — MedLgerr</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="assets/app.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="brand">
+        <div class="logo">MG</div>
+        <h1>MedLgerr</h1>
+      </div>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="strategies.html">Strategies</a>
+        <a href="portfolio.html">Portfolio</a>
+        <a href="process.html">Process</a>
+      </div>
+      <button id="menuBtn" class="btn ghost menu-toggle">Menu</button>
+    </div>
+  </nav>
+
+  <header class="section alt">
+    <div class="container">
+      <div class="kicker">Methodology</div>
+      <h2 class="h-title" style="font-size:40px">From Idea to Live</h2>
+      <p class="h-sub">A concise view of how strategies are engineered, validated, and risk‑controlled.</p>
+    </div>
+  </header>
+
+  <main class="container section">
+    <div class="timeline">
+      <div class="step reveal">
+        <div class="dot">1</div>
+        <div class="box">
+          <h3>Idea Generation</h3>
+          <p class="h-sub">Signal research from historical time series, order flow, and market microstructure.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="dot">2</div>
+        <div class="box">
+          <h3>Validation</h3>
+          <p class="h-sub">Statistical significance, robustness checks, and regime sensitivity prior to any optimization.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="dot">3</div>
+        <div class="box">
+          <h3>Optimization</h3>
+          <p class="h-sub">Parameter sweeps, walk‑forward analysis, and slippage modeling to avoid overfitting.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="dot">4</div>
+        <div class="box">
+          <h3>Backtesting</h3>
+          <p class="h-sub">Multi‑year simulations with realistic costs: spreads, commissions, and partial fills.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="dot">5</div>
+        <div class="box">
+          <h3>Forward Testing</h3>
+          <p class="h-sub">Paper/live‑shadow with DMA routing; monitor latency, queue position, and realized slippage.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="dot">6</div>
+        <div class="box">
+          <h3>Deployment</h3>
+          <p class="h-sub">Colocation/DMA venues, health checks, and rollback triggers.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="dot">7</div>
+        <div class="box">
+          <h3>Risk Management</h3>
+          <p class="h-sub">Drawdown controls, volatility targeting, circuit‑breakers, and fail‑safe systems.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    Made with ❤️ — MedLgerr
+  </footer>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>

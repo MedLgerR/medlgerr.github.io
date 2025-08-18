@@ -1,0 +1,62 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portfolio — MedLgerr</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="assets/app.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="brand">
+        <div class="logo">MG</div>
+        <h1>MedLgerr</h1>
+      </div>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="strategies.html">Strategies</a>
+        <a href="portfolio.html">Portfolio</a>
+        <a href="process.html">Process</a>
+      </div>
+      <button id="menuBtn" class="btn ghost menu-toggle">Menu</button>
+    </div>
+  </nav>
+
+  <header class="section alt">
+    <div class="container">
+      <div class="kicker">Performance Snapshot</div>
+      <h2 class="h-title" style="font-size:40px">Portfolio</h2>
+      <p class="h-sub">Illustrative metrics and visuals. Replace with your verified stats or screenshots when ready.</p>
+    </div>
+  </header>
+
+  <main class="container section">
+    <div class="metrics reveal">
+      <div class="metric"><small class="kicker">CAGR</small><strong id="mCAGR">42.3%</strong><span style="color:var(--muted)">Compounded</span></div>
+      <div class="metric"><small class="kicker">Sharpe</small><strong id="mSharpe">2.65</strong><span style="color:var(--muted)">Annualized</span></div>
+      <div class="metric"><small class="kicker">Max Drawdown</small><strong id="mDD">6.8%</strong><span style="color:var(--muted)">Peak-to-trough</span></div>
+    </div>
+
+    <div class="card reveal" style="margin-top:14px">
+      <h3>Equity Curve (illustrative)</h3>
+      <div class="chart-wrap"><canvas id="eqChart"></canvas></div>
+    </div>
+
+    <div class="card reveal" style="margin-top:14px">
+      <h3>Notes</h3>
+      <p class="h-sub">This page is static. Update numbers in <code>assets/app.js</code> or replace visuals with screenshots from Myfxbook/MT5 statements. Keep presentation concise and professional.</p>
+    </div>
+  </main>
+
+  <footer>
+    Made with ❤️ — MedLgerr
+  </footer>
+
+  <script src="assets/app.js"></script>
+  <script>initPortfolio();</script>
+</body>
+</html>
