@@ -1,0 +1,132 @@
+
+/* ---------- Theme ---------- */
+:root{
+  --bg:#060a0f;
+  --panel:#0b1118;
+  --muted:#8aa0b2;
+  --text:#dbe7f3;
+  --accent:#00e6c3;
+  --accent2:#5b7df7;
+  --glass:rgba(255,255,255,0.06);
+  --border:rgba(255,255,255,0.08);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color:var(--text);
+  background:
+     radial-gradient(1200px 600px at 20% -10%, rgba(91,125,247,0.12), transparent 60%),
+     radial-gradient(900px 600px at 120% 110%, rgba(0,230,195,0.10), transparent 50%),
+     var(--bg);
+  overflow-x:hidden;
+}
+a{color:var(--accent); text-decoration:none}
+.container{max-width:1120px;margin:0 auto;padding:22px}
+.grid{display:grid;gap:18px}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 14px;border-radius:12px;
+  border:1px solid var(--border); background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  color:var(--text); cursor:pointer; transition:transform .2s, box-shadow .2s, border-color .2s;
+}
+.btn:hover{ transform:translateY(-2px); box-shadow:0 12px 40px rgba(0,0,0,0.5); border-color:rgba(255,255,255,0.18) }
+.btn.ghost{ background:transparent }
+
+/* ---------- Top Nav ---------- */
+.nav{
+  position:sticky; top:0; z-index:50;
+  backdrop-filter: blur(8px);
+  background: rgba(3,7,13,0.5);
+  border-bottom:1px solid var(--border);
+}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:12px 22px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{
+  width:40px;height:40px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;color:#041024;font-size:18px;
+  background:linear-gradient(135deg, var(--accent2), var(--accent));
+  box-shadow:0 6px 30px rgba(91,125,247,0.28);
+}
+.brand h1{font-size:16px;margin:0}
+.nav a{color:var(--text);opacity:.85}
+.nav-links{display:flex;gap:16px;align-items:center}
+.menu-toggle{display:none}
+
+/* ---------- Hero ---------- */
+.hero{position:relative;min-height:92vh;display:flex;align-items:center}
+.hero .headline{max-width:860px}
+.kicker{letter-spacing:.14em; text-transform:uppercase;color:var(--muted); font-size:12px}
+.h-title{font-size:56px;line-height:1.06;margin:10px 0 8px 0}
+.h-sub{color:var(--muted);font-size:18px;max-width:760px}
+.hero-cta{margin-top:18px;display:flex;gap:10px;align-items:center}
+
+/* floating particles canvas */
+#fx-canvas{position:absolute;inset:0;z-index:-1;filter:contrast(110%) brightness(110%)}
+
+/* ---------- Section blocks ---------- */
+.section{padding:70px 0;border-top:1px solid var(--border)}
+.section.alt{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent)}
+.zig{grid-template-columns: 1.1fr 1fr; align-items:center}
+.zig.reverse{grid-template-columns:1fr 1.1fr}
+.card{
+  background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  border:1px solid var(--border);
+  border-radius:16px; padding:18px;
+  box-shadow:0 10px 40px rgba(2,6,23,0.5);
+}
+.card h3{margin:4px 0 6px 0;font-size:22px}
+.card p{color:var(--muted);margin:0}
+
+/* Stat badges */
+.badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.badge{padding:8px 10px;border:1px solid var(--border);border-radius:999px;font-size:12px;color:var(--muted);background:rgba(255,255,255,0.03)}
+
+/* ---------- Strategy Cards ---------- */
+.s-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.s-item{position:relative;overflow:hidden;border-radius:16px;border:1px solid var(--border);background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02))}
+.s-vis{height:240px; background:#08121b; position:relative}
+.s-blur{position:absolute;inset:0; background: radial-gradient(600px 240px at 90% -20%, rgba(0,230,195,0.18), transparent 50%), radial-gradient(600px 240px at -20% 120%, rgba(91,125,247,0.16), transparent 50%); mix-blend:screen; pointer-events:none}
+.s-body{padding:16px}
+.s-cta{display:flex;justify-content:flex-end;padding:0 16px 16px 16px}
+.s-know{border-radius:12px;padding:10px 12px;border:1px solid var(--border);background:rgba(255,255,255,0.02);cursor:pointer}
+.s-know:hover{box-shadow:0 10px 30px rgba(0,0,0,0.5)}
+
+/* ---------- Slide-in Panel ---------- */
+.panel{
+  position:fixed;right:20px;top:70px;width:520px;max-width:92vw;max-height:80vh;
+  background:rgba(6,12,20,0.94); border:1px solid var(--border); border-radius:16px;
+  box-shadow:0 30px 80px rgba(0,0,0,0.7);
+  transform:translateX(16px); opacity:0; transition:transform .25s, opacity .25s;
+  overflow:auto; z-index:60; padding:18px;
+}
+.panel.open{ transform:translateX(0); opacity:1 }
+.panel h3{margin:0 0 6px 0}
+.panel small{color:var(--muted)}
+.panel canvas{width:100%; height:220px; background:transparent; border-radius:10px}
+
+/* ---------- Portfolio ---------- */
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.metric{background:rgba(255,255,255,0.03);border:1px solid var(--border);padding:12px;border-radius:14px}
+.metric strong{display:block;font-size:22px}
+.chart-wrap{height:280px}
+
+/* ---------- Timeline ---------- */
+.timeline{display:grid;gap:14px}
+.step{display:grid;grid-template-columns:42px 1fr;gap:12px;align-items:flex-start}
+.step .dot{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--accent2),var(--accent));display:flex;align-items:center;justify-content:center;font-weight:800;color:#041024}
+.step .box{background:rgba(255,255,255,0.03);border:1px solid var(--border);padding:12px;border-radius:14px}
+
+/* ---------- Footer ---------- */
+footer{padding:30px 0;color:var(--muted);text-align:center;border-top:1px solid var(--border);margin-top:50px}
+
+/* ---------- Responsive ---------- */
+@media (max-width:1000px){
+  .zig,.zig.reverse{grid-template-columns:1fr}
+  .s-grid{grid-template-columns:1fr}
+  .metrics{grid-template-columns:1fr 1fr}
+  .nav-links{display:none}
+  .menu-toggle{display:inline-flex}
+}
