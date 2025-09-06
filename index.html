@@ -1,11 +1,9 @@
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
+  <title>MedLgerr Trading</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MedLgerr — Intelligence at Light Speed</title>
-  <link rel="icon" href="data:,">
   <link rel="stylesheet" href="assets/app.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -13,72 +11,65 @@
   <nav class="nav">
     <div class="nav-inner">
       <div class="brand">
-        <div class="logo">MG</div>
-        <h1>MedLgerr</h1>
+        <div class="logo">M</div>
+        <span>MedLgerr</span>
       </div>
       <div class="nav-links">
         <a href="index.html">Home</a>
         <a href="strategies.html">Strategies</a>
         <a href="portfolio.html">Portfolio</a>
         <a href="process.html">Process</a>
-        <a href="https://github.com/MedLgerr/medlgerr.github.io" target="_blank" rel="noopener">GitHub</a>
       </div>
-      <button id="menuBtn" class="btn ghost menu-toggle">Menu</button>
+      <button id="menuBtn" class="btn ghost">☰</button>
     </div>
   </nav>
 
-  <header class="hero container">
+  <section class="hero">
     <canvas id="fx-canvas"></canvas>
-    <div class="headline">
-      <div class="kicker">Trading Portfolio</div>
-      <h2 class="h-title">Intelligence at Light Speed</h2>
-      <p class="h-sub">A portfolio showcasing algorithmic trading systems, quantitative models, and low‑latency execution — distilled into a simple, static site.</p>
-      <div class="hero-cta">
-        <a href="#edge" class="btn">Explore the Edge</a>
-        <a href="strategies.html" class="btn ghost">View Strategies →</a>
-      </div>
-      <div class="badges">
-        <div class="badge">Sub‑millisecond focus</div>
-        <div class="badge">Level 2 aware</div>
-        <div class="badge">DMA / ECN</div>
+    <div class="container headline">
+      <div class="kicker">Algorithmic Trading</div>
+      <h1 class="h-title">Trading at the Speed of Light</h1>
+      <p class="h-sub">Institutional-grade algorithms, colocated execution, and millisecond dominance.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="zig">
+        <div class="card glass">
+          <h3>Where Strategy Meets Silicon</h3>
+          <p>Algorithms engineered to analyze, decide, and execute — capitalizing on movements at sub-millisecond scale.</p>
+        </div>
+        <img src="assets/algo.jpg" alt="Algorithms" style="border-radius:12px;max-width:100%">
       </div>
     </div>
-  </header>
+  </section>
 
-  <main>
-    <section id="edge" class="section container">
-      <div class="grid zig reveal">
-        <div class="card">
-          <small class="kicker">1 — Algorithmic Trading</small>
-          <h3>Where Strategy Meets Silicon</h3>
-          <p>Algorithms engineered to analyze, decide, and execute — capitalizing on movements at the sub‑millisecond scale.</p>
-        </div>
-        <div class="card">
-          <small class="kicker">2 — Complex Models & Edge</small>
+  <section class="section">
+    <div class="container">
+      <div class="zig reverse">
+        <img src="assets/models.jpg" alt="Models" style="border-radius:12px;max-width:100%">
+        <div class="card glass">
           <h3>Mathematics as an Edge</h3>
-          <p>Built on decades of historical market data, models evolve dynamically to detect structural anomalies and micro‑inefficiencies, turning them into a persistent edge.</p>
+          <p>Built on decades of historical market data, models continuously evolve to detect structural anomalies and micro-inefficiencies, turning them into a persistent edge.</p>
         </div>
       </div>
-      <div class="grid zig reverse reveal" style="margin-top:16px">
-        <div class="card">
-          <small class="kicker">3 — Lightning‑Fast Execution</small>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="zig">
+        <div class="card glass">
           <h3>Precision at the Speed of Light</h3>
-          <p>Ultra‑low‑latency ECN infrastructure, Direct Market Access, and deep liquidity aggregation enable precision fills ahead of the market.</p>
+          <p>Ultra-low-latency ECN infrastructure, Direct Market Access, and deep Liquidity Pools enable precision fills ahead of the market.</p>
         </div>
-        <div class="card">
-          <small class="kicker">Snapshot</small>
-          <h3>Equity Glimpse</h3>
-          <div class="chart-wrap"><canvas id="eqChart"></canvas></div>
-        </div>
+        <img src="assets/execution.jpg" alt="Execution" style="border-radius:12px;max-width:100%">
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
 
-  <footer>
-    Made with ❤️ — MedLgerr • Static site • Manual updates on GitHub Pages
-  </footer>
-
+  <div id="pageOverlay"></div>
   <script src="assets/app.js"></script>
-  <script>initPortfolio();</script>
 </body>
 </html>
