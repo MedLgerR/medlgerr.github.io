@@ -76,7 +76,7 @@ const STRATS = {
   },
   'orb': {
     title: 'Opening Range Breakout',
-    desc: 'Systematic detection of early-session volatility bursts. Defines a time-bound opening range, applies liquidity/volume confirmation, and routes orders with DMA for slippage control.',
+    desc: 'Systematic detection of Early-session volatility bursts. Defines a time-bound opening range, applies liquidity/volume confirmation, and routes orders with DMA for slippage control.',
     equity: [100,99,104,108,115,120,118,124,129,138,145]
   }
 };
