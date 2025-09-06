@@ -1,11 +1,9 @@
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
+  <title>Process - MedLgerr</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Process — MedLgerr</title>
-  <link rel="icon" href="data:,">
   <link rel="stylesheet" href="assets/app.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -13,8 +11,8 @@
   <nav class="nav">
     <div class="nav-inner">
       <div class="brand">
-        <div class="logo">MG</div>
-        <h1>MedLgerr</h1>
+        <div class="logo">M</div>
+        <span>MedLgerr</span>
       </div>
       <div class="nav-links">
         <a href="index.html">Home</a>
@@ -22,76 +20,48 @@
         <a href="portfolio.html">Portfolio</a>
         <a href="process.html">Process</a>
       </div>
-      <button id="menuBtn" class="btn ghost menu-toggle">Menu</button>
+      <button id="menuBtn" class="btn ghost">☰</button>
     </div>
   </nav>
 
-  <header class="section alt">
+  <section class="section">
     <div class="container">
-      <div class="kicker">Methodology</div>
-      <h2 class="h-title" style="font-size:40px">From Idea to Live</h2>
-      <p class="h-sub">A concise view of how strategies are engineered, validated, and risk‑controlled.</p>
-    </div>
-  </header>
-
-  <main class="container section">
-    <div class="timeline">
-      <div class="step reveal">
-        <div class="dot">1</div>
-        <div class="box">
+      <h2 class="h-title">Process</h2>
+      <div class="zig">
+        <div class="card glass">
           <h3>Idea Generation</h3>
-          <p class="h-sub">Signal research from historical time series, order flow, and market microstructure.</p>
+          <p>Identify structural inefficiencies, order-flow anomalies, or regime shifts from historical and live data.</p>
         </div>
+        <img src="assets/idea.jpg" alt="Idea" style="border-radius:12px;max-width:100%">
       </div>
-      <div class="step reveal">
-        <div class="dot">2</div>
-        <div class="box">
-          <h3>Validation</h3>
-          <p class="h-sub">Statistical significance, robustness checks, and regime sensitivity prior to any optimization.</p>
-        </div>
-      </div>
-      <div class="step reveal">
-        <div class="dot">3</div>
-        <div class="box">
-          <h3>Optimization</h3>
-          <p class="h-sub">Parameter sweeps, walk‑forward analysis, and slippage modeling to avoid overfitting.</p>
-        </div>
-      </div>
-      <div class="step reveal">
-        <div class="dot">4</div>
-        <div class="box">
-          <h3>Backtesting</h3>
-          <p class="h-sub">Multi‑year simulations with realistic costs: spreads, commissions, and partial fills.</p>
-        </div>
-      </div>
-      <div class="step reveal">
-        <div class="dot">5</div>
-        <div class="box">
-          <h3>Forward Testing</h3>
-          <p class="h-sub">Paper/live‑shadow with DMA routing; monitor latency, queue position, and realized slippage.</p>
-        </div>
-      </div>
-      <div class="step reveal">
-        <div class="dot">6</div>
-        <div class="box">
-          <h3>Deployment</h3>
-          <p class="h-sub">Colocation/DMA venues, health checks, and rollback triggers.</p>
-        </div>
-      </div>
-      <div class="step reveal">
-        <div class="dot">7</div>
-        <div class="box">
-          <h3>Risk Management</h3>
-          <p class="h-sub">Drawdown controls, volatility targeting, circuit‑breakers, and fail‑safe systems.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="zig reverse">
+        <img src="assets/backtest.jpg" alt="Backtest" style="border-radius:12px;max-width:100%">
+        <div class="card glass">
+          <h3>Backtesting & Optimization</h3>
+          <p>Evaluate across multiple regimes, optimize parameters, and validate robustness with Monte Carlo and walk-forward analysis.</p>
         </div>
       </div>
     </div>
-  </main>
+  </section>
 
-  <footer>
-    Made with ❤️ — MedLgerr
-  </footer>
+  <section class="section">
+    <div class="container">
+      <div class="zig">
+        <div class="card glass">
+          <h3>Risk Management</h3>
+          <p>Position sizing, drawdown controls, fail-safes, and system-level monitoring designed for institutional-grade resilience.</p>
+        </div>
+        <img src="assets/risk.jpg" alt="Risk" style="border-radius:12px;max-width:100%">
+      </div>
+    </div>
+  </section>
 
+  <div id="pageOverlay"></div>
   <script src="assets/app.js"></script>
 </body>
 </html>
